@@ -1,4 +1,4 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import '../backend/backend.dart' as back;
 
@@ -15,6 +15,9 @@ class _Login_page extends State<Login_page> {
   final TextEditingController _username_controller = TextEditingController();
   final TextEditingController _password_controller = TextEditingController();
 
+  bool login_waiting = false;
+  bool login_success = true;
+
   @override
   void dispose() {
     _username_controller.dispose();
@@ -23,12 +26,24 @@ class _Login_page extends State<Login_page> {
   }
 
   void Login() async {
+    setState(() => login_waiting = true);
+
     String username = _username_controller.text;
     String password = _password_controller.text;
 
     bool verif = await API.login(username, password);
-    debugPrint("$verif");
+
+    setState(() {
+      if (!verif) {
+        login_waiting = false;
+        login_success = false;
+      }
+    });
   }
+
+  ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +66,16 @@ class _Login_page extends State<Login_page> {
                           fontSize: 25
                       )
                   ),
+                  if (!login_success) FAlert(
+                    style: FAlertStyle.destructive.call(),
+                    title: const Text('Erreur de connection'),
+                    icon: Icon(FIcons.circleAlert),
+                  ),
                   FTextField(
                     control: .managed(controller: _username_controller),
                     label: const Text("Username:"),
                     hint: "Username",
                     maxLines: 1,
-
                   ),
                   FTextField.password(
                     control: .managed(controller: _password_controller),
@@ -66,10 +85,10 @@ class _Login_page extends State<Login_page> {
                   ),
                   FButton(
                     mainAxisSize: MainAxisSize.min,
-                    prefix: const Icon(FIcons.logIn),
-                    onPress: Login,
+                    prefix: login_waiting?const FCircularProgress():const Icon(FIcons.logIn),
+                    onPress: login_waiting?null:Login,
                     child: const Text('Se connecter'),
-                  )
+                  ),
                 ],
               ),
             )
@@ -77,7 +96,3 @@ class _Login_page extends State<Login_page> {
     );
   }
 }
-
-ThemeData darkTheme = ThemeData(
-    brightness: Brightness.dark,
-);
