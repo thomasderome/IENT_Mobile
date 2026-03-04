@@ -44,7 +44,7 @@ class API {
     else return false;
   }
 
-  Future<List<Map>> get_planning({String date = ""}) async {
+  Future<Map> get_planning({String date = ""}) async {
     // 2026-02-16
     Response response = await request.get("https://www.ient.fr/planninghebdo?date=$date", Options());
     Document planning_parse = await parser.html_parse(response.data);
@@ -52,7 +52,10 @@ class API {
     List<Element> days = planning_parse.getElementsByClassName("col-sm-1 col-12");
     RegExp reg = RegExp(r"top:\s*([\d.]+)px;?\s*height:\s*([\d.]+)px");
 
-    List<Map> result = [];
+    Map result = {};
+
+    String date_today = DateTime.now().day.toString();
+    int count = 1;
 
     for (Element day in days) {
       List<Map> temp = [];
@@ -88,10 +91,13 @@ class API {
           });
         }
       }
-      result.add({
+
+      result[date.split(" ")[1] == date_today ? -1:count]({
         "day": date,
         "activity": temp
       });
+
+      count++;
     }
     return result;
   }
