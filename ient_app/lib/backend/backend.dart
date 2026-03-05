@@ -54,14 +54,15 @@ class API {
 
     Map result = {};
 
-    String date_today = DateTime.now().day.toString();
+    int date_today = DateTime.now().day;
+    String date_today_str = date_today < 10 ? "0$date_today":"$date_today";
+
     int count = 1;
 
     for (Element day in days) {
       List<Map> temp = [];
 
-      String date = day.getElementsByClassName("entete-jour_planning")[0].text
-          .trim();
+      String date = day.getElementsByClassName("entete-jour_planning")[0].text.trim();
       List<Element> sequences = day.getElementsByClassName("sequence");
 
       for (Element sequence in sequences) {
@@ -92,10 +93,11 @@ class API {
         }
       }
 
-      result[date.split(" ")[1] == date_today ? -1:count]({
+
+      result[date.split(" ")[1] == date_today_str ? -1:count] = {
         "day": date,
         "activity": temp
-      });
+      };
 
       count++;
     }
