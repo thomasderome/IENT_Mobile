@@ -17,6 +17,9 @@ class API {
   // Variable system
   final base_url = "ient.fr";
 
+  // Variable cache
+  Document? home_page = null;
+
   // Login function
   Future<bool> login(String username, String password) async {
     Response response = await request.get("https://auth.ient.fr/cas/login?service=https%3A%2F%2Fwww.ient.fr%2Flogin%3Fprofil%3D2", Options());
@@ -37,7 +40,11 @@ class API {
 
     if (redirect_url != "") {
       Response verif = await request.redirect_system(redirect_url);
-      if (verif.realUri.toString() == "https://www.ient.fr/Welcome") return true;
+
+      if (verif.realUri.toString() == "https://www.ient.fr/Welcome") {
+        home_page = await parser.html_parse(verif.data);
+        return true;
+      }
 
       return false;
     }
@@ -70,14 +77,14 @@ class API {
           String style = sequence.attributes["style"] ?? "";
           Match? match = reg.firstMatch(style)!;
 
-          double start = int.parse(match.group(1)!) / 21;
-          double time = (int.parse(match.group(2)!) + 3) / 21;
-          
+          double start = double.parse(match.group(1)!).round() / 21;
+          double time = (double.parse(match.group(2)!).round() + 3) / 21;
+
           List<Element> data_activity = sequence.getElementsByClassName("txt_planning");
 
           temp.add({
             "name": data_activity[0].text.trim(),
-            "prof": data_activity[1].text.trim(),
+            "prof": data_activity[0],
             "room": data_activity[2].text.trim(),
             "time": time,
             "start": start
