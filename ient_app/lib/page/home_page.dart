@@ -54,7 +54,7 @@ class _Home_page extends State<Home_page> {
 
       activity_widget.add(
       SizedBox(
-        width: 500,
+        width: 400,
         height: 85,
         child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,26 +72,29 @@ class _Home_page extends State<Home_page> {
               ),
             ),
           ),
-          Padding(
+          Expanded(child: Padding(
               padding: const EdgeInsets.only(left: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     activity["name"],
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                   Text(
                     activity["prof"],
                     style: TextStyle(fontSize: 18),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                      activity["room"],
-                      style: TextStyle(fontSize: 18)
+                    activity["room"],
+                    style: TextStyle(fontSize: 18),
+                    overflow: TextOverflow.ellipsis,
                   )
                 ],
               )
-          )
+          ))
         ])
       ));
     }
@@ -129,7 +132,6 @@ class _Home_page extends State<Home_page> {
 
   void Loading_planngin() async {
     Map result = await get_planning();
-
     setState(() {
       planning_cache = result;
       render_day();
