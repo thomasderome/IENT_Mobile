@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import '../backend/backend.dart' as back;
+import 'package:time/time.dart';
 
 class Planning extends StatefulWidget {
   const Planning({super.key});
@@ -10,7 +11,7 @@ class Planning extends StatefulWidget {
 }
 
 class Planning_ extends State<Planning> {
-  ThemeData darkTheme = ThemeData(
+  final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
   );
 
@@ -28,11 +29,6 @@ class Planning_ extends State<Planning> {
           ]
       )
   );
-
-  Future<Map> get_planning() async {
-    Map planning_temp = await API.get_planning();
-    return planning_temp;
-  }
 
   Color get_color(String name) {
     return HSLColor.fromAHSL(1.0, name.hashCode.toDouble() % 360, 0.53, 0.575).toColor();
@@ -126,12 +122,32 @@ class Planning_ extends State<Planning> {
 
   // if scroll state true next day else last day
   void scroll_planning(bool scroll_state) {
-    planning_cache["day_select"] = scroll_state ? planning_cache["day_select"] + 1 : planning_cache["day_select"] - 1;
+    int verif = scroll_state ? planning_cache["day_select"] + 1 : planning_cache["day_select"] - 1;
+
+    if (verif <= 5 && verif >= 1) {
+      planning_cache["day_select"] = verif;
+    } else {
+      debugPrint(scroll_state.toString());
+      final int direction = scroll_state ? 1 : -1;
+      debugPrint(direction.toString());
+      final num next_day = (8 - planning_cache["original"]) * direction;
+      debugPrint(next_day.toString());
+      debugPrint(planning_cache["original"].toString());
+
+      final week = DateTime.parse(planning_cache["date_select"]) + next_day.days;
+
+      Loading_planning(custom_date: "${week.year}-${week.month >= 10 ? week.month : '0${week.month}'}-${week.day >= 10 ? week.day : '0${week.day}'}") ;
+    }
     render_day();
   }
 
-  void Loading_planning() async {
-    Map result = await get_planning();
+  Future<Map> get_planning({String? custom_date = null}) async {
+    if (custom_date == null) { return await API.get_planning(); }
+    else { return await API.get_planning(date_custom: custom_date); }
+  }
+
+  void Loading_planning({String? custom_date = null}) async {
+    Map result = await get_planning(custom_date:custom_date);
     setState(() {
       planning_cache = result;
       render_day();

@@ -3,6 +3,7 @@ import 'html_parser.dart';
 import 'package:flutter_keystore/flutter_keystore.dart';
 import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
+import 'package:flutter/material.dart' as mat;
 
 class API {
   // Single skeleton
@@ -55,18 +56,18 @@ class API {
     return false;
   }
 
-  Future<Map> get_planning({String date = ""}) async {
+  Future<Map> get_planning({String date_custom = ""}) async {
     // 2026-02-16
-    Response response = await request.get("https://www.ient.fr/planninghebdo?date=$date", Options());
+    Response response = await request.get("https://www.ient.fr/planninghebdo?date=$date_custom", Options());
     Document planning_parse = await parser.html_parse(response.data);
 
     List<Element> days = planning_parse.getElementsByClassName("col-sm-1 col-12");
     RegExp reg = RegExp(r"top:\s*([\d.]+)px;?\s*height:\s*([\d.]+)px");
 
-    int date_today = DateTime.now().day;
-    String date_today_str = date_today < 10 ? "0$date_today":"$date_today";
+    DateTime date_today = DateTime.now();
+    String date_today_str = date_today.day <= 10 ? "0${date_today.day}":"${date_today.day}";
 
-    int to_day = 1;
+    int to_day = date_custom == "" ? 1 : date_today.isAfter(DateTime.parse(date_custom)) ? 5 : 1;
     Map temp_days = {};
     int count = 1;
 
@@ -109,12 +110,14 @@ class API {
         "activity": temp
       };
 
+      if (date.split(" ")[1] == date_today_str && date_custom == "") { to_day = count; }
       count++;
-      if (date.split(" ")[1] == date_today_str) { to_day = count; }
     }
 
     Map result = {
       "day_select": to_day,
+      "original": to_day,
+      "date_select": date_custom == "" ? "${date_today.year}-${date_today.month >= 10 ? date_today.month : '0${date_today.month}'}-${date_today.day >= 10 ? date_today.day : '0${date_today.day}'}" : date_custom,
       "days": temp_days
     };
 
