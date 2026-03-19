@@ -50,7 +50,7 @@ class _Login_page extends State<Login_page> {
     });
   }
 
-  ThemeData darkTheme = ThemeData(
+  final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
   );
 

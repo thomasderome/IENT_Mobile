@@ -11,7 +11,7 @@ class Home_page extends StatefulWidget {
 }
 
 class _Home_page extends State<Home_page> {
-  ThemeData darkTheme = ThemeData(
+  final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
   );
 
