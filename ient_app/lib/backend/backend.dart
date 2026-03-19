@@ -63,11 +63,11 @@ class API {
     List<Element> days = planning_parse.getElementsByClassName("col-sm-1 col-12");
     RegExp reg = RegExp(r"top:\s*([\d.]+)px;?\s*height:\s*([\d.]+)px");
 
-    Map result = {};
-
     int date_today = DateTime.now().day;
     String date_today_str = date_today < 10 ? "0$date_today":"$date_today";
 
+    int to_day = 1;
+    Map temp_days = {};
     int count = 1;
 
     for (Element day in days) {
@@ -104,14 +104,20 @@ class API {
         }
       }
 
-
-      result[date.split(" ")[1] == date_today_str ? -1:count] = {
+      temp_days[count] = {
         "day": date,
         "activity": temp
       };
 
       count++;
+      if (date.split(" ")[1] == date_today_str) { to_day = count; }
     }
+
+    Map result = {
+      "day_select": to_day,
+      "days": temp_days
+    };
+
     return result;
   }
 }
