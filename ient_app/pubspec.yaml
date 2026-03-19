@@ -42,6 +42,7 @@ dependencies:
   dio_cookie_manager: ^3.3.0
   cookie_jar: ^4.0.8
   flutter_keystore: ^0.0.2
+  time: ^2.1.6
 
 dev_dependencies:
   flutter_test:
