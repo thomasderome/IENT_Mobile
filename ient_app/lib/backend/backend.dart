@@ -1,6 +1,6 @@
 import 'request.dart';
 import 'html_parser.dart';
-import 'package:flutter/material.dart' as mat;
+import 'package:flutter_keystore/flutter_keystore.dart';
 import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
 
@@ -43,12 +43,16 @@ class API {
 
       if (verif.realUri.toString() == "https://www.ient.fr/Welcome") {
         home_page = await parser.html_parse(verif.data);
+
+        final FlutterKeystore keyStore = FlutterKeystore();
+
+        await keyStore.write("username", username);
+        await keyStore.write("password", password);
+
         return true;
       }
-
-      return false;
     }
-    else return false;
+    return false;
   }
 
   Future<Map> get_planning({String date = ""}) async {
@@ -84,7 +88,7 @@ class API {
 
           temp.add({
             "name": data_activity[0].text.trim(),
-            "prof": data_activity[0],
+            "prof": data_activity[1].text.trim(),
             "room": data_activity[2].text.trim(),
             "time": time,
             "start": start
