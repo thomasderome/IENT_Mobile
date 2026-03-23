@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'request.dart';
 import 'html_parser.dart';
-import 'package:flutter_keystore/flutter_keystore.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
 import 'package:flutter/material.dart' as mat;
@@ -45,10 +47,13 @@ class API {
       if (verif.realUri.toString() == "https://www.ient.fr/Welcome") {
         home_page = await parser.html_parse(verif.data);
 
-        final FlutterKeystore keyStore = FlutterKeystore();
+        final Map<String, String> account = {
+          "login": username,
+          "password": password
+        };
 
-        await keyStore.write("username", username);
-        await keyStore.write("password", password);
+        final FlutterSecureStorage keystore = FlutterSecureStorage();
+        await keystore.write(key: "account", value: jsonEncode(account));
 
         return true;
       }
