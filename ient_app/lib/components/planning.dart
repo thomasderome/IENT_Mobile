@@ -89,6 +89,21 @@ class Planning_ extends State<Planning> {
           ));
     }
 
+    if (activity_widget.isEmpty) {
+      activity_widget.add(
+          SizedBox(
+              width: 400,
+              height: 85,
+              child: Center(
+                  child: Text(
+                      "Aucun cour prévu pour à ce jour.",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                  )
+              )
+          )
+      );
+    }
+
     setState(() {
       actual_day_widget = FCard(
         title: Row(
@@ -121,24 +136,26 @@ class Planning_ extends State<Planning> {
   }
 
   // if scroll state true next day else last day
+  bool disable_scroll = false;
   void scroll_planning(bool scroll_state) {
+    if (disable_scroll) return;
+    disable_scroll = true;
+
     int verif = scroll_state ? planning_cache["day_select"] + 1 : planning_cache["day_select"] - 1;
 
     if (verif <= 5 && verif >= 1) {
       planning_cache["day_select"] = verif;
     } else {
-      debugPrint(scroll_state.toString());
       final int direction = scroll_state ? 1 : -1;
-      debugPrint(direction.toString());
       final num next_day = (8 - planning_cache["original"]) * direction;
-      debugPrint(next_day.toString());
-      debugPrint(planning_cache["original"].toString());
 
       final week = DateTime.parse(planning_cache["date_select"]) + next_day.days;
 
       Loading_planning(custom_date: "${week.year}-${week.month >= 10 ? week.month : '0${week.month}'}-${week.day >= 10 ? week.day : '0${week.day}'}") ;
     }
+
     render_day();
+    disable_scroll = false;
   }
 
   Future<Map> get_planning({String? custom_date = null}) async {
