@@ -43,7 +43,8 @@ class Planning_ extends State<Planning> {
       double time = activity["time"] * 30 + start;
 
       activity_widget.add(
-          SizedBox(
+        Padding(padding: EdgeInsets.only(bottom: 5),
+          child: SizedBox(
               width: 400,
               height: 85,
               child: Row(
@@ -86,7 +87,8 @@ class Planning_ extends State<Planning> {
                         )
                     ))
                   ])
-          ));
+          ))
+        );
     }
 
     if (activity_widget.isEmpty) {
