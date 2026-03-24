@@ -110,6 +110,12 @@ class API {
         }
       }
 
+      temp.sort((m1, m2) {
+        var r = m1["start"].compareTo(m2["start"]);
+        if (r != 0) return r;
+        return m1["start"].compareTo(m2["start"]);
+      });
+
       temp_days[count] = {
         "day": date,
         "activity": temp
