@@ -136,27 +136,30 @@ class API {
   }
 
   Future<Map<String, List>> get_work() async {
-    final Iterable<String>? work_days = home_page?.querySelectorAll("a[href^='/cahiertexte/travail?date=']").map((e) => e.attributes["href"]!).toSet();
+    final Iterable<String>? work_week = home_page?.querySelectorAll("a[href^='/cahiertexte/travail?date=']").map((e) => e.attributes["href"]!).toSet();
 
     Map<String, List> work = {};
-    for (final day in work_days!) {
-      final work_page = await request.get("https://www.ient.fr${day}", Options());
+    for (final week in work_week!) {
+      final work_page = await request.get("https://www.ient.fr$week", Options());
       final work_html = await parser.html_parse(work_page.data);
 
-      final works_day = work_html.querySelectorAll('div[id^="modal_"]');
+      for (Element day in work_html.querySelectorAll("div[class^='col-sm-1 col-12']")) {
+        final String? date = day.querySelector("div[class='entete-jour_planning']")?.text.trim();
+        final works_day = day.querySelectorAll('div[id^="modal_"]');
 
-      for (Element work_day in works_day) {
-        if (work[day] == null) work[day] = [];
+        for (Element work_day in works_day) {
+          if (work[date] == null) work[date!] = [];
 
-        work[day]?.add({
-          "title": work_day.getElementsByTagName("h3")[0].text,
-          "desc_simple": "",
-          "desc_detail": work_day.querySelector('div[class^="modal-body"]')?.querySelector("div[style^='padding-left:10px;padding-right:10px;']")?.text,
-          "doc": work_day.querySelectorAll('a[href]').map((e) => "https://www.ient.fr/${e.attributes['href']}"),
-        });
+          work[date]?.add({
+            "title": work_day.getElementsByTagName("h3")[0].text.trim(),
+            "desc_simple": "",
+            "desc_detail": work_day.querySelector('div[class^="modal-body"]')?.querySelector("div[style^='padding-left:10px;padding-right:10px;']")?.text.trim(),
+            "doc": work_day.querySelectorAll('a[href]').map((e) => "https://www.ient.fr${e.attributes['href']}"),
+          });
+        }
       }
     }
-
+    mat.debugPrint(work.toString());
     return work;
   }
 }
