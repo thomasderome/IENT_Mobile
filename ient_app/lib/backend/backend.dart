@@ -152,9 +152,8 @@ class API {
 
           work[date]?.add({
             "title": work_day.getElementsByTagName("h3")[0].text.trim(),
-            "desc_simple": "",
             "desc_detail": work_day.querySelector('div[class^="modal-body"]')?.querySelector("div[style^='padding-left:10px;padding-right:10px;']")?.text.trim(),
-            "doc": work_day.querySelectorAll('a[href]').map((e) => "https://www.ient.fr${e.attributes['href']}"),
+            "doc": work_day.querySelectorAll('a[href]').map((e) => {"name": e.text, "link": "https://www.ient.fr${e.attributes['href']}"}).toList(),
           });
         }
       }
