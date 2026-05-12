@@ -44,6 +44,7 @@ dependencies:
   time: ^2.1.6
   flutter_secure_storage: ^10.0.0
   flutter_launcher_icons: ^0.14.4
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
