@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:path_provider/path_provider.dart';
 
 class HttpRequest {
   late Dio dio;
@@ -42,4 +45,16 @@ class HttpRequest {
     }
     return response;
   }
+
+  Future<String> download(String url) async {
+    Uri uri = Uri.parse(url);
+
+    Directory tempDir = await getTemporaryDirectory();
+    String file_name = uri.queryParameters["nom"] ?? "";
+    String savePath = "${tempDir.path}/${file_name.isEmpty ? uri.pathSegments.last : file_name}";
+
+    await dio.download(url, savePath);
+    return savePath;
+  }
+
 }
