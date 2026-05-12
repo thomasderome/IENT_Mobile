@@ -114,7 +114,7 @@ class Planning_ extends State<Planning> {
           children: [
             FButton(
               onPress: () => scroll_planning(false),
-              child: const Text("p"),
+              child: const Text("<"),
             ),
             Padding(
               padding: EdgeInsets.only(left: 10, right: 10),
@@ -122,7 +122,7 @@ class Planning_ extends State<Planning> {
             ),
             FButton(
                 onPress: () => scroll_planning(true),
-                child: const Text("n")
+                child: const Text(">")
             ),
           ],
         ),
@@ -181,17 +181,6 @@ class Planning_ extends State<Planning> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: darkTheme,
-        builder: (context, child) => FTheme(
-          data: FThemes.zinc.dark,
-          child: child!,
-        ),
-        home: Scaffold(
-            body: Center(
-                child: actual_day_widget
-            )
-        )
-    );
+    return actual_day_widget;
   }
 }
