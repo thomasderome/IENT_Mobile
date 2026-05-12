@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:open_file/open_file.dart';
 import 'request.dart';
 import 'html_parser.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -158,7 +159,11 @@ class API {
         }
       }
     }
-    mat.debugPrint(work.toString());
     return work;
+  }
+
+  Future<void> render_file(String url) async {
+    final String path_download = await request.download(url);
+    await OpenFile.open(path_download);
   }
 }
