@@ -26,9 +26,13 @@ jobs:
 
       - name: Build APK
         run: |
+          CLEAN_VERSION=$(echo "${{ github.ref_name }}" | sed 's/v//')
+
           cd ient_app
           flutter pub get
-          flutter build apk --release
+          flutter build apk --release \
+            --build-name=$CLEAN_VERSION \
+            --build-number=${{ github.run_number }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
