@@ -6,7 +6,6 @@ import 'html_parser.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
-import 'package:flutter/material.dart' as mat;
 
 class API {
   // Single skeleton
