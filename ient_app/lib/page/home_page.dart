@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import '../backend/backend.dart' as back;
 import '../components/planning.dart';
 import '../components/work.dart';
+import '../backend/verif_update.dart';
 
 class Home_page extends StatefulWidget {
   const Home_page({super.key});
@@ -16,6 +16,8 @@ class _Home_page extends State<Home_page> {
     brightness: Brightness.dark,
   );
 
+  bool _hasCheckedUpdate = false;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,20 +26,32 @@ class _Home_page extends State<Home_page> {
         data: FThemes.zinc.dark,
         child: child!,
       ),
-      home: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Planning(),
-                const SizedBox(height: 16),
-                const Work(),
-              ],
+
+      home: Builder(
+        builder: (innerContext) {
+          if (!_hasCheckedUpdate) {
+            _hasCheckedUpdate = true;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              VerifUpdate.check(innerContext);
+            });
+          }
+
+          return Scaffold(
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Planning(),
+                    const SizedBox(height: 16),
+                    const Work(),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

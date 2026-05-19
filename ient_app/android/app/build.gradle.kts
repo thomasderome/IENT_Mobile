@@ -24,9 +24,8 @@ android {
         applicationId = "com.thomas_derome.ient_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        targetSdkVersion 34
-        versionCode 1
-        versionName "v1.0.0"
+        versionCode = 1
+        versionName = "1.0.0"
 
         minSdk = 28
         targetSdk = flutter.targetSdkVersion
