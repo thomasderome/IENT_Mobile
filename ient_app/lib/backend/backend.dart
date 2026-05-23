@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart' as mat;
 import 'package:open_file/open_file.dart';
 import 'request.dart';
 import 'html_parser.dart';
@@ -54,7 +54,7 @@ class API {
 
         final FlutterSecureStorage keystore = FlutterSecureStorage();
         await keystore.write(key: "account", value: jsonEncode(account));
-        await get_work();
+        await get_note();
         return true;
       }
     }
@@ -164,5 +164,62 @@ class API {
   Future<void> render_file(String url) async {
     final String path_download = await request.download(url);
     await OpenFile.open(path_download);
+  }
+
+  Future<void> get_note() async {
+    final Response request_notes = await request.get("https://www.ient.fr/notes", Options());
+    final Document notes_parse = await parser.html_parse(request_notes.data);
+    List<Map<String, dynamic>> data = [];
+
+    final List<Element> note_by_prof = notes_parse.querySelectorAll('.card-body > div.row');
+
+    for (Element notes_prof in note_by_prof) {
+      final String? prof = notes_prof.querySelector("small.formateur")?.text.trim();
+      if (prof == null || prof.isEmpty) continue;
+
+      final List<Element> list_note = notes_prof.querySelectorAll("div.col-lg-1.border-notes");
+
+      List<Map<String, String>> note_temp = [];
+      double somme = 0.0;
+      double number = 0.0;
+
+      for (Element note in list_note) {
+        final String date = note.querySelector("small.note-date")?.text.trim() ?? "";
+        final String note_on = note.querySelector("small.note-sur")?.text.trim() ?? "";
+        final String final_note = note.querySelector("span.note-note")?.text.trim() ?? "";
+
+        final String coeff = note.querySelector("div[id\$='_bulle'] small")?.text.trim() ?? "";
+
+        if (final_note.isEmpty || note_on.isEmpty) {
+          continue;
+        }
+
+        note_temp.add({
+          "date": date,
+          "final_note": final_note,
+          "note_on": note_on,
+          "coeff": coeff
+        });
+
+        double? noteVal = double.tryParse(final_note);
+        double? totalVal = double.tryParse(note_on.replaceAll("/", "").trim());
+
+        String coeffNettoye = coeff.replaceAll(RegExp(r'[^0-9.]'), '');
+        double coeffVal = double.tryParse(coeffNettoye) ?? 1.0;
+
+        if (noteVal != null && totalVal != null && totalVal > 0) {
+          somme += (noteVal * 20 / totalVal) * coeffVal;
+          number += coeffVal;
+        }
+      }
+
+      if (note_temp.isNotEmpty) {
+        data.add({
+          "prof_name": prof,
+          "notes": note_temp,
+          "moyenne": number > 0 ? (somme / number).toStringAsFixed(2) : "N/A",
+        });
+      }
+    }
   }
 }
