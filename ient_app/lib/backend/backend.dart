@@ -54,7 +54,6 @@ class API {
 
         final FlutterSecureStorage keystore = FlutterSecureStorage();
         await keystore.write(key: "account", value: jsonEncode(account));
-        await get_note();
         return true;
       }
     }
@@ -166,7 +165,7 @@ class API {
     await OpenFile.open(path_download);
   }
 
-  Future<void> get_note() async {
+  Future<List<Map>> get_note() async {
     final Response request_notes = await request.get("https://www.ient.fr/notes", Options());
     final Document notes_parse = await parser.html_parse(request_notes.data);
     List<Map<String, dynamic>> data = [];
@@ -221,5 +220,6 @@ class API {
         });
       }
     }
+    return data;
   }
 }
