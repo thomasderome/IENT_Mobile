@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'page/login_page.dart';
 import 'page/home_page.dart';
 import '../backend/backend.dart' as back;
-import '../backend/verif_update.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() async {
