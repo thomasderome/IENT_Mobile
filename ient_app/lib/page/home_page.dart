@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import '../components/planning.dart';
 import '../components/work.dart';
 import '../backend/verif_update.dart';
+import '../components/note.dart';
 
 class Home_page extends StatefulWidget {
   const Home_page({super.key});
@@ -46,6 +47,8 @@ class _Home_page extends State<Home_page> {
                     const Planning(),
                     const SizedBox(height: 16),
                     const Work(),
+                    const SizedBox(height: 16),
+                    const Note()
                   ],
                 ),
               ),
