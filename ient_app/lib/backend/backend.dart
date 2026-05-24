@@ -174,6 +174,8 @@ class API {
 
     for (Element notes_prof in note_by_prof) {
       final String? prof = notes_prof.querySelector("small.formateur")?.text.trim();
+      final String? matiere = notes_prof.querySelector("div.matiere")?.text.trim() ?? "";
+
       if (prof == null || prof.isEmpty) continue;
 
       final List<Element> list_note = notes_prof.querySelectorAll("div.col-lg-1.border-notes");
@@ -187,13 +189,15 @@ class API {
         final String note_on = note.querySelector("small.note-sur")?.text.trim() ?? "";
         final String final_note = note.querySelector("span.note-note")?.text.trim() ?? "";
 
-        final String coeff = note.querySelector("div[id\$='_bulle'] small")?.text.trim() ?? "";
-
-        if (final_note.isEmpty || note_on.isEmpty) {
-          continue;
+        if (final_note.trim().isEmpty || note_on.trim().isEmpty) {
+          break;
         }
 
+        final String coeff = note.querySelector("div[id\$='_bulle'] small")?.text.trim() ?? "";
+        final String name = note.querySelector("div[id\$='_bulle'] div.detail-absences-txt")?.text.trim() ?? "";
+
         note_temp.add({
+          "name": name,
           "date": date,
           "final_note": final_note,
           "note_on": note_on,
@@ -214,6 +218,7 @@ class API {
 
       if (note_temp.isNotEmpty) {
         data.add({
+          "matiere": matiere,
           "prof_name": prof,
           "notes": note_temp,
           "moyenne": number > 0 ? (somme / number).toStringAsFixed(2) : "N/A",
