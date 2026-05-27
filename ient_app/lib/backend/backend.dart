@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart' as mat;
 import 'package:open_file/open_file.dart';
 import 'request.dart';
 import 'html_parser.dart';
