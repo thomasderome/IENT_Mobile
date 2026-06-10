@@ -91037,7 +91037,7 @@ s=new A.a9i(A.aO(t.m))
 q.WE$=s
 this.a=q
 s.b=!0},
-U3(a){var s="http://127.0.0.1:3000/api/?url=",r=B.c.bp(a,s)
+U3(a){var s="https://ient-mobile.vercel.app/api/?url=",r=B.c.bp(a,s)
 if(!r)return s+a
 return a},
 nY(a,b){return this.a_a(a,b)},
