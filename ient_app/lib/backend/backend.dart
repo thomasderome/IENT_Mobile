@@ -5,6 +5,8 @@ import 'html_parser.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
+import 'package:flutter/foundation.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class API {
   // Single skeleton
@@ -38,24 +40,29 @@ class API {
 
     // Change url if add for account parent
     Response login = await request.post("https://auth.ient.fr/cas/login?service=https%3A%2F%2Fwww.ient.fr%2Flogin%3Fprofil%3D2", params, Options(contentType: "application/x-www-form-urlencoded"));
-    String redirect_url = login.headers.value("location") ?? "";
+    Response verif;
 
-    if (redirect_url != "") {
-      Response verif = await request.redirect_system(redirect_url);
+    if (kIsWeb) {
+        verif = login;
+    } else {
+        String redirect_url = login.headers.value("location") ?? "";
+        if (redirect_url != "") { verif = await request.redirect_system(redirect_url); }
+        else { return false; }
+    }
 
-      if (verif.realUri.toString() == "https://www.ient.fr/Welcome") {
+    if (verif.headers.value("finish_link")?.endsWith("/Welcome") ?? false || verif.realUri.toString().endsWith("/Welcome")) {
         home_page = await parser.html_parse(verif.data);
 
         final Map<String, String> account = {
-          "login": username,
-          "password": password
+            "login": username,
+            "password": password
         };
 
         final FlutterSecureStorage keystore = FlutterSecureStorage();
         await keystore.write(key: "account", value: jsonEncode(account));
         return true;
-      }
     }
+
     return false;
   }
 
@@ -160,8 +167,12 @@ class API {
   }
 
   Future<void> render_file(String url) async {
-    final String path_download = await request.download(url);
-    await OpenFile.open(path_download);
+    if (kIsWeb) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      final String path_download = await request.download(url);
+      await OpenFile.open(path_download);
+    }
   }
 
   Future<List<Map>> get_note() async {

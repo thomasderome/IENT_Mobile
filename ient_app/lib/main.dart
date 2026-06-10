@@ -4,8 +4,10 @@ import 'page/login_page.dart';
 import 'page/home_page.dart';
 import '../backend/backend.dart' as back;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() async {
+  usePathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
 
   final API = back.API();

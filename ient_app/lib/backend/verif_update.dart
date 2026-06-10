@@ -4,9 +4,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './request.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class VerifUpdate {
   static Future<void> check(BuildContext context) async {
+    if (kIsWeb) return;
     final HttpRequest request = HttpRequest();
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();

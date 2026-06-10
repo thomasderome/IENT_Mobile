@@ -48,9 +48,12 @@ dependencies:
   open_file: ^3.5.11
   package_info_plus: ^10.1.0
   url_launcher: ^6.3.2
+  universal_io: ^2.2.2
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  flutter_web_plugins:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
